@@ -1,153 +1,80 @@
 #!/bin/bash
 
-#Colores Instalador
-msgi() {
-    BLANCO='\033[1;37m' && ROJO='\033[0;31m' && VERDE='\033[0;32m' && AMARELO='\033[0;33m'
-    AZUL='\033[0;34m' && MORADO='\033[0;35m' && CIAN='\033[0;36m' && NEGRITA='\033[1m' && SINCOLOR='\033[0m'
-    case $1 in
-    -ne) cor="${ROJO}${NEGRITA}" && echo -ne "${cor}${2}${SINCOLOR}" ;;
-    -ama) cor="${AMARELO}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}" ;;
-    -verm) cor="${AMARELO}${NEGRITA}[!] ${ROJO}" && echo -e "${cor}${2}${SINCOLOR}" ;;
-    -azu) cor="${CIAN}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}" ;;
-    -verd) cor="${VERDE}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}" ;;
-    -bra) cor="${ROJO}" && echo -ne "${cor}${2}${SINCOLOR}" ;;
-    "-bar2" | "-bar") cor="${MORADO}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SINCOLOR}${cor}${SINCOLOR}" ;;
-    esac
+# Códigos de color ANSI de 8 bits
+NEGRO='\033[0;30m'
+ROJO='\033[0;31m'
+VERDE='\033[0;32m'
+AMARILLO='\033[0;33m'
+AZUL='\033[0;34m'
+MORADO='\033[0;35m'
+CIAN='\033[0;36m'
+BLANCO='\033[0;37m'
+
+# Códigos de color ANSI de 24 bits
+ROJO_BRILLANTE='\033[38;2;255;69;0m'
+VERDE_BRILLANTE='\033[38;2;76;175;80m'
+AZUL_BRILLANTE='\033[38;2;0;188;212m'
+MORADO_BRILLANTE='\033[38;2;186;85;211m'
+
+# Códigos de formato
+NEGRITA='\033[1m'
+SUBRAYADO='\033[4m'
+RESET='\033[0m'
+
+# Función para imprimir mensajes con color y formato
+msg() {
+    local color="${1}"
+    local formato="${2}"
+    local texto="${3}"
+    printf "${color}${formato}${texto}${RESET}\n"
 }
 
-# interfaz de colores
-msg(){
-  COLOR[0]='\033[1;37m' #BRAN='\033[1;37m'
-  COLOR[1]='\033[0;31m' #VERMELHO='\033[0;31m'
-  COLOR[2]='\033[0;32m' #VERDE='\033[0;32m'
-  COLOR[3]='\033[0;33m' #AMARELO='\033[0;33m'
-  COLOR[4]='\033[0;34m' #AZUL='\033[0;34m'
-  COLOR[5]='\033[0;35m' #MORADO='\033[0;35m'
-  COLOR[6]='\033[0;36m' #CIAN='\033[0;36m'
-  COLOR[7]='\033[0;37m' #GRIS='\033[0;37m'
-  COLOR[8]='\033[0;90m' #GRIS_OSCURO='\033[0;90m'
-  COLOR[9]='\033[0;94m' #AZUL_CLARO='\033[0;94m'
-
-  NEGRITO='\033[1m'
-  SINCOLOR='\033[0m'
-
-  case $1 in
-    -ne)   cor="${COLOR[1]}${NEGRITO}" && echo -ne "${cor}${2}${SINCOLOR}";;
-    -nazu) cor="${COLOR[6]}${NEGRITO}" && echo -ne "${cor}${2}${SINCOLOR}";;
-    -nverd)cor="${COLOR[2]}${NEGRITO}" && echo -ne "${cor}${2}${SINCOLOR}";;
-    -nama) cor="${COLOR[3]}${NEGRITO}" && echo -ne "${cor}${2}${SINCOLOR}";;
-    -ama)  cor="${COLOR[3]}${NEGRITO}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -verm) cor="${COLOR[3]}${NEGRITO}[!] ${COLOR[1]}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -verm2)cor="${COLOR[1]}${NEGRITO}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -verm3)cor="${COLOR[1]}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -teal) cor="${COLOR[6]}${NEGRITO}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -teal2)cor="${COLOR[6]}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -blak) cor="${COLOR[8]}${NEGRITO}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -blak2)cor="${COLOR[8]}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -azu)  cor="${COLOR[4]}${NEGRITO}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -blu)  cor="${COLOR[9]}${NEGRITO}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -blu1) cor="${COLOR[9]}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -verd) cor="${COLOR[2]}${NEGRITO}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -bra)  cor="${COLOR[7]}${NEGRITO}" && echo -e "${cor}${2}${SINCOLOR}";;
-    -bar)  cor="${COLOR[5]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SINCOLOR}${cor}${SINCOLOR}";;
-    -bar2) cor="${COLOR[9]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SINCOLOR}${cor}${SINCOLOR}";;
-    -bar3) cor="${COLOR[1]}-----------------------------------------------------" && echo -e "${SINCOLOR}${cor}${SINCOLOR}";;
-    -bar4) cor="${COLOR[6]}-----------------------------------------------------" && echo -e "${SINCOLOR}${cor}${SINCOLOR}";;
-    -bar5)cor="\033[0;90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SINCOLOR}${cor}${SINCOLOR}";;
-    -bar6)cor="\033[0;35m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SINCOLOR}${cor}${SINCOLOR}";;
-  esac
+# Función para imprimir mensajes centrados
+print_center() {
+    local texto="${1}"
+    local ancho="${2:-54}"
+    local longitud="${#texto}"
+    local padding=$(((ancho - longitud) / 2))
+    printf "%${padding}s%s\n" " " "${texto}"
 }
 
-# centrado de texto
-print_center(){
-  if [[ -z $2 ]]; then
-    text="$1"
-  else
-    col="$1"
-    text="$2"
-  fi
-
-  while read line; do
-    unset space
-    x=$(( ( 54 - ${#line}) / 2))
-    for (( i = 0; i < $x; i++ )); do
-      space+=' '
-    done
-    space+="$line"
-    if [[ -z $2 ]]; then
-      msg -azu "$space"
-    else
-      msg "$col" "$space"
-    fi
-  done <<< $(echo -e "$text")
-}
-
-# ------- BARRA DE INTALL BASICO
+# Función para mostrar una barra de progreso básica
 barra_intallb() {
- comando="$1"
-  _=$(
-    $comando >/dev/null 2>&1
-  ) &
-  >/dev/null
-  pid=$!
-  while [[ -d /proc/$pid ]]; do
-    echo -ne "  \033[1;33m["
-    for ((i = 0; i < 40; i++)); do
-      echo -ne "\033[1;31m>"
-      sleep 0.1
-    done
-    echo -ne "\033[1;33m]"
-    sleep 1s
-    echo
-    tput cuu1 && tput dl1
-  done
-  echo -ne "  \033[1;33m[\033[1;31m>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[1;33m] - \033[1;32m OK \033[0m\n"
-  sleep 1s
-}
-# ------- BARRA DE INSTALL PAQUETES
-barra_intall() {
-    comando="$1"
-    _=$(
-        $comando >/dev/null 2>&1
-    ) &
-    >/dev/null
+    local comando="${1}"
+    local pid
+    ${comando} >/dev/null 2>&1 &
     pid=$!
-    while [[ -d /proc/$pid ]]; do
-        echo -ne "  \033[1;33m["
-        for ((i = 0; i < 20; i++)); do
-            echo -ne "\033[1;31m>"
-            sleep 0.08
-        done
-        echo -ne "\033[1;33m]"
-        sleep 0.5s
-        echo
+    while [[ -d /proc/${pid} ]]; do
+        msg "${AMARILLO}" "${NEGRITA}" "  [" && printf "${ROJO_BRILLANTE}%*s" 40 "" && msg "${AMARILLO}" "${NEGRITA}" "]"
+        sleep 0.1s
         tput cuu1 && tput dl1
     done
-    [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] || ESTATUS=$(echo -e "\033[91m  FALLO DE INSTALACION") &>/dev/null
-    [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] && ESTATUS=$(echo -e "\033[1;33m       \033[92mINSTALADO") &>/dev/null
-    echo -ne "  \033[1;33m[\033[1;31m>>>>>>>>>>>>>>>>>>>>\033[1;33m] $ESTATUS \033[0m\n"
+    msg "${VERDE_BRILLANTE}" "${NEGRITA}" "  [${ROJO_BRILLANTE}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>${VERDE_BRILLANTE}] - ${AMARILLO}${NEGRITA}OK${RESET}"
+    sleep 1s
+}
+
+# Función para mostrar una barra de progreso de instalación de paquetes
+barra_intall() {
+    local comando="${1}"
+    local paquete="${2}"
+    local pid
+    ${comando} >/dev/null 2>&1 &
+    pid=$!
+    while [[ -d /proc/${pid} ]]; do
+        msg "${AMARILLO}" "${NEGRITA}" "  [" && printf "${ROJO_BRILLANTE}%*s" 20 "" && msg "${AMARILLO}" "${NEGRITA}" "]"
+        sleep 0.08s
+        tput cuu1 && tput dl1
+    done
+    if [[ $(dpkg --get-selections | grep -w "${paquete}" | head -1) ]]; then
+        msg "${VERDE_BRILLANTE}" "${NEGRITA}" "       ${AMARILLO}${NEGRITA}INSTALADO${RESET}"
+    else
+        msg "${ROJO_BRILLANTE}" "${NEGRITA}" "  ${AMARILLO}${NEGRITA}FALLO DE INSTALACIÓN${RESET}"
+    fi
     sleep 0.5s
 }
-# ------- BARRA CENTRADORA
-print_center() {
-    if [[ -z $2 ]]; then
-        text="$1"
-    else
-        col="$1"
-        text="$2"
-    fi
 
-    while read line; do
-        unset space
-        x=$(((54 - ${#line}) / 2))
-        for ((i = 0; i < $x; i++)); do
-            space+=' '
-        done
-        space+="$line"
-        if [[ -z $2 ]]; then
-            msgi -azu "$space"
-        else
-            msgi "$col" "$space"
-        fi
-    done <<<$(echo -e "$text")
-}
+# Ejemplos de uso
+print_center "${MORADO_BRILLANTE}${NEGRITA}${SUBRAYADO}Título Elegante${RESET}"
+msg "${AZUL_BRILLANTE}" "${NEGRITA}" "Este es un mensaje en azul brillante y negrita."
+barra_intallb "sleep 5"
+barra_intall "apt-get install -y git" "git"
