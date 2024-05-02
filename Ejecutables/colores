@@ -2,7 +2,7 @@
 
 #Colores Instalador
 msgi() {
-    BLANCO='\033[38;2;255;255;255m' && ROJO='\033[38;2;255;69;0m' && VERDE='\033[38;2;76;175;80m' && AMARILLO='\033[38;2;242;211;56m'
+    BLANCO='\033[1;37m' && ROJO='\033[38;2;255;69;0m' && VERDE='\033[38;2;76;175;80m' && AMARILLO='\033[38;2;242;211;56m'
     AZUL='\033[38;2;0;188;212m' && MORADO='\033[38;2;186;85;211m' && CIAN='\033[38;2;0;185;166m' && NEGRITA='\033[1m' && SUBRAYADO='\033[4m' && SINCOLOR='\033[0m'
     case $1 in
     -ne) cor="${ROJO}${NEGRITA}" && echo -ne "${cor}${2}${SINCOLOR}" ;;
@@ -85,84 +85,73 @@ print_center(){
 
 # ------- BARRA DE INTALL BASICO
 barra_intallb() {
-    comando="$1"
-    _=$(
-        $comando >/dev/null 2>&1
-    ) &
-    >/dev/null
-    pid=$!
-    porcentaje=0
-    while [[ -d /proc/$pid ]]; do
-echo -ne "  \033[38;2;242;211;56m[\033[1m"
-for ((i = 0; i < porcentaje; i++)); do
-printf "\033[38;2;76;175;80m>"
-done
-for ((i = porcentaje; i < 100; i++)); do
-printf "\033[38;2;255;69;0m>"
-done
-echo -ne "\033[38;2;242;211;56m]\033[1m ${porcentaje}%"
-sleep 0.1
-echo
-tput cuu1 && tput dl1
-porcentaje=$((porcentaje + 5))
-if [[ $porcentaje -gt 100 ]]; then
-porcentaje=100
-fi
-done
-echo -ne "  \033[38;2;242;211;56m[\033[38;2;76;175;80m>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m - \033[38;2;76;175;80m\033[1mOK\033[0m\n"
-sleep 1s
+ comando="$1"
+  _=$(
+    $comando >/dev/null 2>&1
+  ) &
+  >/dev/null
+  pid=$!
+  while [[ -d /proc/$pid ]];do
+   echo -ne "  \033[38;2;242;211;56m[\033[1m"
+   for ((i = 0; i < 40; i++)); do
+     printf "\033[38;2;255;69;0m>"
+     sleep 0.1
+   done
+   echo -ne "\033[38;2;242;211;56m]\033[1m"
+   sleep 1s
+   echo
+   tput cuu1 && tput dl1
+ done
+ echo -ne "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m - \033[38;2;76;175;80m\033[1mOK\033[0m\n"
+ sleep 1s
 }
-#------- BARRA DE INSTALL PAQUETES
+
+# ------- BARRA DE INSTALL PAQUETES
 barra_intall() {
-comando="$1"
-paquete="$2"
-_=$(
-$comando >/dev/null 2>&1
-) &
->/dev/null
-pid=$!
-porcentaje=0
-while [[ -d /proc/$pid ]]; do
-echo -ne "  \033[38;2;242;211;56m[\033[1m"
-for ((i = 0; i < porcentaje; i++)); do
-printf "\033[38;2;76;175;80m>"
-done
-for ((i = porcentaje; i < 100; i++)); do
-printf "\033[38;2;255;69;0m>"
-done
-echo -ne "\033[38;2;242;211;56m]\033[1m ${porcentaje}%"
-sleep 0.08
-echo
-tput cuu1 && tput dl1
-porcentaje=$((porcentaje + 5))
-if [[ $porcentaje -gt 100 ]]; then
-porcentaje=100
-fi
-done
-[[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] || ESTATUS=$(echo -e "\033[38;2;255;69;0m\033[1m  FALLO DE INSTALACION") &>/dev/null
-[[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] && ESTATUS=$(echo -e "\033[38;2;242;211;56m\033[1m       \033[38;2;76;175;80m\033[1mINSTALADO") &>/dev/null
-echo -ne "  \033[38;2;242;211;56m[\033[38;2;76;175;80m>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m $ESTATUS \033[0m\n"
-sleep 0.5s
+   comando="$1"
+   paquete="$2"
+   _=$(
+       $comando >/dev/null 2>&1
+   ) &
+   >/dev/null
+   pid=$!
+   while [[ -d /proc/$pid ]]; do
+       echo -ne "  \033[38;2;242;211;56m[\033[1m"
+       for ((i = 0; i < 20; i++)); do
+           printf "\033[38;2;255;69;0m>"
+           sleep 0.08
+       done
+       echo -ne "\033[38;2;242;211;56m]\033[1m"
+       sleep 0.5s
+       echo
+       tput cuu1 && tput dl1
+   done
+   [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] || ESTATUS=$(echo -e "\033[38;2;255;69;0m\033[1m  FALLO DE INSTALACION") &>/dev/null
+   [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] && ESTATUS=$(echo -e "\033[38;2;242;211;56m\033[1m       \033[38;2;76;175;80m\033[1mINSTALADO") &>/dev/null
+   echo -ne "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m $ESTATUS \033[0m\n"
+   sleep 0.5s
 }
-#------- BARRA CENTRADORA
+
+# ------- BARRA CENTRADORA
 print_center() {
-if [[ -z $2 ]]; then
-text="$1"
-else
-col="$1"
-text="$2"
-fi
-while read line; do
-    unset space
-    x=$(((54 - ${#line}) / 2))
-    for ((i = 0; i < $x; i++)); do
-        space+=' '
-    done
-    space+="$line"
-    if [[ -z $2 ]]; then
-        msgi -azu "$space"
-    else
-        msgi "$col" "$space"
-    fi
-done <<<$(echo -e "$text")
+   if [[ -z $2 ]]; then
+       text="$1"
+   else
+       col="$1"
+       text="$2"
+   fi
+
+   while read line; do
+       unset space
+       x=$(((54 - ${#line}) / 2))
+       for ((i = 0; i < $x; i++)); do
+           space+=' '
+       done
+       space+="$line"
+       if [[ -z $2 ]]; then
+           msgi -azu "$space"
+       else
+           msgi "$col" "$space"
+       fi
+   done <<<$(echo -e "$text")
 }
