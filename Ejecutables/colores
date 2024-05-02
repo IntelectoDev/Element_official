@@ -1,4 +1,97 @@
-echo -ne "  \033[38;2;242;211;56m[\033[1m"
+#!/bin/bash
+
+#Colores Instalador
+msgi() {
+    BLANCO='\033[1;37m' && ROJO='\033[38;2;255;69;0m' && VERDE='\033[38;2;76;175;80m' && AMARILLO='\033[38;2;242;211;56m'
+    AZUL='\033[38;2;0;188;212m' && MORADO='\033[38;2;186;85;211m' && CIAN='\033[38;2;0;185;166m' && NEGRITA='\033[1m' && SUBRAYADO='\033[4m' && SINCOLOR='\033[0m'
+    case $1 in
+    -ne) cor="${ROJO}${NEGRITA}" && echo -ne "${cor}${2}${SINCOLOR}" ;;
+    -ama) cor="${AMARILLO}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}" ;;
+    -verm) cor="${AMARILLO}${NEGRITA}[!] ${ROJO}" && echo -e "${cor}${2}${SINCOLOR}" ;;
+    -azu) cor="${AZUL}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}" ;;
+    -verd) cor="${VERDE}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}" ;;
+    -bra) cor="${ROJO}" && echo -ne "${cor}${2}${SINCOLOR}" ;;
+    "-bar2" | "-bar") cor="${MORADO}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SINCOLOR}${cor}${SINCOLOR}" ;;
+    esac
+}
+
+# interfaz de colores
+msg() {
+  COLOR[0]='\033[38;2;255;255;255m' # Blanco
+  COLOR[1]='\033[38;2;255;69;0m' # Rojo
+  COLOR[2]='\033[38;2;76;175;80m' # Verde
+  COLOR[3]='\033[38;2;242;211;56m' # Amarillo
+  COLOR[4]='\033[38;2;0;188;212m' # Azul
+  COLOR[5]='\033[38;2;186;85;211m' # Morado
+  COLOR[6]='\033[38;2;0;185;166m' # Cian
+  COLOR[7]='\033[38;2;192;192;192m' # Gris
+  COLOR[8]='\033[38;2;128;128;128m' # Gris oscuro
+  COLOR[9]='\033[38;2;0;145;234m' # Azul claro
+
+  NEGRITO='\033[1m'
+  SUBRAYADO='\033[4m'
+  SINCOLOR='\033[0m'
+
+  case $1 in
+    -ne)   cor="${COLOR[1]}${NEGRITO}" && echo -ne "${cor}${2}${SINCOLOR}";;
+    -nazu) cor="${COLOR[6]}${NEGRITO}" && echo -ne "${cor}${2}${SINCOLOR}";;
+    -nverd)cor="${COLOR[2]}${NEGRITO}" && echo -ne "${cor}${2}${SINCOLOR}";;
+    -nama) cor="${COLOR[3]}${NEGRITO}" && echo -ne "${cor}${2}${SINCOLOR}";;
+    -ama)  cor="${COLOR[3]}${NEGRITO}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -verm) cor="${COLOR[3]}${NEGRITA}[!] ${COLOR[1]}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -verm2)cor="${COLOR[1]}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -verm3)cor="${COLOR[1]}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -teal) cor="${COLOR[6]}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -teal2)cor="${COLOR[6]}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -blak) cor="${COLOR[8]}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -blak2)cor="${COLOR[8]}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -azu)  cor="${COLOR[4]}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -blu)  cor="${COLOR[9]}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -blu1) cor="${COLOR[9]}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -verd) cor="${COLOR[2]}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -bra)  cor="${COLOR[0]}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -bar)  cor="${COLOR[5]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SINCOLOR}${cor}${SINCOLOR}";;
+    -bar2) cor="${COLOR[9]}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SINCOLOR}${cor}${SINCOLOR}";;
+    -bar3) cor="${COLOR[1]}-----------------------------------------------------" && echo -e "${SINCOLOR}${cor}${SINCOLOR}";;
+    -bar4) cor="${COLOR[6]}-----------------------------------------------------" && echo -e "${SINCOLOR}${cor}${SINCOLOR}";;
+    -bar5) cor="\033[38;2;128;128;128m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SINCOLOR}${cor}${SINCOLOR}";;
+    -bar6) cor="\033[38;2;186;85;211m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && echo -e "${SINCOLOR}${cor}${SINCOLOR}";;
+  esac
+}
+
+# centrado de texto
+print_center(){
+  if [[ -z $2 ]]; then
+    text="$1"
+  else
+    col="$1"
+    text="$2"
+  fi
+
+  while read line; do
+    unset space
+    x=$(( ( 54 - ${#line}) / 2))
+    for (( i = 0; i < $x; i++ )); do
+      space+=' '
+    done
+    space+="$line"
+    if [[ -z $2 ]]; then
+      msg -azu "$space"
+    else
+      msg "$col" "$space"
+    fi
+  done <<< $(echo -e "$text")
+}
+
+# ------- BARRA DE INTALL BASICO
+barra_intallb() {
+ comando="$1"
+  _=$(
+    $comando >/dev/null 2>&1
+  ) &
+  >/dev/null
+  pid=$!
+  while [[ -d /proc/$pid ]]; doecho -ne "  \033[38;2;242;211;56m[\033[1m"
    for ((i = 0; i < 40; i++)); do
      printf "\033[38;2;255;69;0m>"
      sleep 0.1
