@@ -16,7 +16,7 @@ msgi() {
 }
 
 # interfaz de colores
-msg() {
+msg(){
   COLOR[0]='\033[38;2;255;255;255m' # Blanco
   COLOR[1]='\033[38;2;255;69;0m' # Rojo
   COLOR[2]='\033[38;2;76;175;80m' # Verde
@@ -28,16 +28,16 @@ msg() {
   COLOR[8]='\033[38;2;128;128;128m' # Gris oscuro
   COLOR[9]='\033[38;2;0;145;234m' # Azul claro
 
-  NEGRITO='\033[1m'
+  NEGRITA='\033[1m'
   SUBRAYADO='\033[4m'
   SINCOLOR='\033[0m'
 
   case $1 in
-    -ne)   cor="${COLOR[1]}${NEGRITO}" && echo -ne "${cor}${2}${SINCOLOR}";;
-    -nazu) cor="${COLOR[6]}${NEGRITO}" && echo -ne "${cor}${2}${SINCOLOR}";;
-    -nverd)cor="${COLOR[2]}${NEGRITO}" && echo -ne "${cor}${2}${SINCOLOR}";;
-    -nama) cor="${COLOR[3]}${NEGRITO}" && echo -ne "${cor}${2}${SINCOLOR}";;
-    -ama)  cor="${COLOR[3]}${NEGRITO}" && echo -e "${cor}${2}${SINCOLOR}";;
+    -ne)   cor="${COLOR[1]}${NEGRITA}" && echo -ne "${cor}${2}${SINCOLOR}";;
+    -nazu) cor="${COLOR[6]}${NEGRITA}" && echo -ne "${cor}${2}${SINCOLOR}";;
+    -nverd)cor="${COLOR[2]}${NEGRITA}" && echo -ne "${cor}${2}${SINCOLOR}";;
+    -nama) cor="${COLOR[3]}${NEGRITA}" && echo -ne "${cor}${2}${SINCOLOR}";;
+    -ama)  cor="${COLOR[3]}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}";;
     -verm) cor="${COLOR[3]}${NEGRITA}[!] ${COLOR[1]}" && echo -e "${cor}${2}${SINCOLOR}";;
     -verm2)cor="${COLOR[1]}${NEGRITA}" && echo -e "${cor}${2}${SINCOLOR}";;
     -verm3)cor="${COLOR[1]}" && echo -e "${cor}${2}${SINCOLOR}";;
@@ -91,7 +91,8 @@ barra_intallb() {
   ) &
   >/dev/null
   pid=$!
-  while [[ -d /proc/$pid ]]; doecho -ne "  \033[38;2;242;211;56m[\033[1m"
+  while [[ -d /proc/$pid ]];do
+   echo -ne "  \033[38;2;242;211;56m[\033[1m"
    for ((i = 0; i < 40; i++)); do
      printf "\033[38;2;255;69;0m>"
      sleep 0.1
