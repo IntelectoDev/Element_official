@@ -1,80 +1,63 @@
-#!/bin/bash
-
-# Códigos de color ANSI de 8 bits
-NEGRO='\033[0;30m'
-ROJO='\033[0;31m'
-VERDE='\033[0;32m'
-AMARILLO='\033[0;33m'
-AZUL='\033[0;34m'
-MORADO='\033[0;35m'
-CIAN='\033[0;36m'
-BLANCO='\033[0;37m'
-
-# Códigos de color ANSI de 24 bits
-ROJO_BRILLANTE='\033[38;2;255;69;0m'
-VERDE_BRILLANTE='\033[38;2;76;175;80m'
-AZUL_BRILLANTE='\033[38;2;0;188;212m'
-MORADO_BRILLANTE='\033[38;2;186;85;211m'
-
-# Códigos de formato
-NEGRITA='\033[1m'
-SUBRAYADO='\033[4m'
-RESET='\033[0m'
-
-# Función para imprimir mensajes con color y formato
-msg() {
-    local color="${1}"
-    local formato="${2}"
-    local texto="${3}"
-    printf "${color}${formato}${texto}${RESET}\n"
+echo -ne "  \033[38;2;242;211;56m[\033[1m"
+   for ((i = 0; i < 40; i++)); do
+     printf "\033[38;2;255;69;0m>"
+     sleep 0.1
+   done
+   echo -ne "\033[38;2;242;211;56m]\033[1m"
+   sleep 1s
+   echo
+   tput cuu1 && tput dl1
+ done
+ echo -ne "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m - \033[38;2;76;175;80m\033[1mOK\033[0m\n"
+ sleep 1s
 }
 
-# Función para imprimir mensajes centrados
-print_center() {
-    local texto="${1}"
-    local ancho="${2:-54}"
-    local longitud="${#texto}"
-    local padding=$(((ancho - longitud) / 2))
-    printf "%${padding}s%s\n" " " "${texto}"
-}
-
-# Función para mostrar una barra de progreso básica
-barra_intallb() {
-    local comando="${1}"
-    local pid
-    ${comando} >/dev/null 2>&1 &
-    pid=$!
-    while [[ -d /proc/${pid} ]]; do
-        msg "${AMARILLO}" "${NEGRITA}" "  [" && printf "${ROJO_BRILLANTE}%*s" 40 "" && msg "${AMARILLO}" "${NEGRITA}" "]"
-        sleep 0.1s
-        tput cuu1 && tput dl1
-    done
-    msg "${VERDE_BRILLANTE}" "${NEGRITA}" "  [${ROJO_BRILLANTE}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>${VERDE_BRILLANTE}] - ${AMARILLO}${NEGRITA}OK${RESET}"
-    sleep 1s
-}
-
-# Función para mostrar una barra de progreso de instalación de paquetes
+# ------- BARRA DE INSTALL PAQUETES
 barra_intall() {
-    local comando="${1}"
-    local paquete="${2}"
-    local pid
-    ${comando} >/dev/null 2>&1 &
-    pid=$!
-    while [[ -d /proc/${pid} ]]; do
-        msg "${AMARILLO}" "${NEGRITA}" "  [" && printf "${ROJO_BRILLANTE}%*s" 20 "" && msg "${AMARILLO}" "${NEGRITA}" "]"
-        sleep 0.08s
-        tput cuu1 && tput dl1
-    done
-    if [[ $(dpkg --get-selections | grep -w "${paquete}" | head -1) ]]; then
-        msg "${VERDE_BRILLANTE}" "${NEGRITA}" "       ${AMARILLO}${NEGRITA}INSTALADO${RESET}"
-    else
-        msg "${ROJO_BRILLANTE}" "${NEGRITA}" "  ${AMARILLO}${NEGRITA}FALLO DE INSTALACIÓN${RESET}"
-    fi
-    sleep 0.5s
+   comando="$1"
+   paquete="$2"
+   _=$(
+       $comando >/dev/null 2>&1
+   ) &
+   >/dev/null
+   pid=$!
+   while [[ -d /proc/$pid ]]; do
+       echo -ne "  \033[38;2;242;211;56m[\033[1m"
+       for ((i = 0; i < 20; i++)); do
+           printf "\033[38;2;255;69;0m>"
+           sleep 0.08
+       done
+       echo -ne "\033[38;2;242;211;56m]\033[1m"
+       sleep 0.5s
+       echo
+       tput cuu1 && tput dl1
+   done
+   [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] || ESTATUS=$(echo -e "\033[38;2;255;69;0m\033[1m  FALLO DE INSTALACION") &>/dev/null
+   [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] && ESTATUS=$(echo -e "\033[38;2;242;211;56m\033[1m       \033[38;2;76;175;80m\033[1mINSTALADO") &>/dev/null
+   echo -ne "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m $ESTATUS \033[0m\n"
+   sleep 0.5s
 }
 
-# Ejemplos de uso
-print_center "${MORADO_BRILLANTE}${NEGRITA}${SUBRAYADO}Título Elegante${RESET}"
-msg "${AZUL_BRILLANTE}" "${NEGRITA}" "Este es un mensaje en azul brillante y negrita."
-barra_intallb "sleep 5"
-barra_intall "apt-get install -y git" "git"
+# ------- BARRA CENTRADORA
+print_center() {
+   if [[ -z $2 ]]; then
+       text="$1"
+   else
+       col="$1"
+       text="$2"
+   fi
+
+   while read line; do
+       unset space
+       x=$(((54 - ${#line}) / 2))
+       for ((i = 0; i < $x; i++)); do
+           space+=' '
+       done
+       space+="$line"
+       if [[ -z $2 ]]; then
+           msgi -azu "$space"
+       else
+           msgi "$col" "$space"
+       fi
+   done <<<$(echo -e "$text")
+}
