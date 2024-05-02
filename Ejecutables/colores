@@ -86,8 +86,8 @@ print_center(){
 # ------- BARRA DE INTALL BASICO
 barra_intallb() {
   comando="$1"
-  _=$( { time $comando >/dev/null; } 2>&1 )
-  elapsed_time=$( { time $comando >/dev/null; } 2>&1 | grep real | awk '{print $2}' )
+  { time $comando >/dev/null; } 2>time_output.txt
+  elapsed_time=$(grep real time_output.txt | awk '{print $2}')
   seconds=$(echo $elapsed_time | awk -F'[ms]+' '{print ($1*60)+$2}')
   while [ $seconds -gt 0 ]; do
     echo -ne "  \033[38;2;242;211;56m[\033[1m"
@@ -103,14 +103,15 @@ barra_intallb() {
   done
   echo -ne "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m - \033[38;2;76;175;80m\033[1mOK\033[0m\n"
   sleep 1s
+rm -f time_output.txt
 }
 
 # ------- BARRA DE INSTALL PAQUETES
 barra_intall() {
    comando="$1"
    paquete="$2"
-   _=$( { time $comando >/dev/null; } 2>&1 )
-   elapsed_time=$( { time $comando >/dev/null; } 2>&1 | grep real | awk '{print $2}' )
+   { time $comando >/dev/null; } 2>time_output.txt
+   elapsed_time=$(grep real time_output.txt | awk '{print $2}')
    seconds=$(echo $elapsed_time | awk -F'[ms]+' '{print ($1*60)+$2}')
    while [ $seconds -gt 0 ]; do
        echo -ne "  \033[38;2;242;211;56m[\033[1m"
@@ -128,6 +129,7 @@ barra_intall() {
    [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] && ESTATUS=$(echo -e "\033[38;2;242;211;56m\033[1m       \033[38;2;76;175;80m\033[1mINSTALADO") &>/dev/null
    echo -ne "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m $ESTATUS \033[0m\n"
    sleep 0.5s
+rm -f time_output.txt
 }
 
 
