@@ -97,7 +97,7 @@ title(){
 # finalización de tareas
  enter(){
   msg -bar5
-  text="►► Presione enter para continuar ◄◄"
+  text="►► Presione enter para continuar ◄"
 if [[ -z $1 ]]; then
    print_center -ama "$text"
  else
