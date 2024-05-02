@@ -86,50 +86,56 @@ print_center(){
 # ------- BARRA DE INTALL BASICO
 barra_intallb() {
   comando="$1"
-  { time $comando >/dev/null; } 2>time_output.txt
-  elapsed_time=$(grep real time_output.txt | awk '{print $2}')
-  seconds=$(echo $elapsed_time | awk -F'[ms]+' '{print ($1*60)+$2}')
-  while [ $seconds -gt 0 ]; do
+  start_time=$(date +%s)
+  $comando >/dev/null 2>&1 &
+  pid=$!
+  while ps -p $pid >/dev/null; do
     echo -ne "  \033[38;2;242;211;56m[\033[1m"
     for ((i = 0; i < 40; i++)); do
       printf "\033[38;2;255;69;0m>"
-      sleep $(echo "scale=2; $seconds / 40" | bc)
-      ((seconds-=1))
+      sleep 0.1
     done
     echo -ne "\033[38;2;242;211;56m]\033[1m"
     sleep 1s
     echo
     tput cuu1 && tput dl1
   done
+  end_time=$(date +%s)
+  elapsed_time=$((end_time - start_time))
+  while [ $elapsed_time -gt 40 ]; do
+    ((elapsed_time-=1))
+  done
   echo -ne "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m - \033[38;2;76;175;80m\033[1mOK\033[0m\n"
   sleep 1s
-rm -f time_output.txt
 }
 
 # ------- BARRA DE INSTALL PAQUETES
 barra_intall() {
    comando="$1"
    paquete="$2"
-   { time $comando >/dev/null; } 2>time_output.txt
-   elapsed_time=$(grep real time_output.txt | awk '{print $2}')
-   seconds=$(echo $elapsed_time | awk -F'[ms]+' '{print ($1*60)+$2}')
-   while [ $seconds -gt 0 ]; do
+   start_time=$(date +%s)
+   $comando >/dev/null 2>&1 &
+   pid=$!
+   while ps -p $pid >/dev/null; do
        echo -ne "  \033[38;2;242;211;56m[\033[1m"
        for ((i = 0; i < 20; i++)); do
            printf "\033[38;2;255;69;0m>"
-           sleep $(echo "scale=2; $seconds / 20" | bc)
-           ((seconds-=1))
+           sleep 0.1
        done
        echo -ne "\033[38;2;242;211;56m]\033[1m"
        sleep 0.5s
        echo
        tput cuu1 && tput dl1
    done
+   end_time=$(date +%s)
+   elapsed_time=$((end_time - start_time))
+   while [ $elapsed_time -gt 20 ]; do
+       ((elapsed_time-=1))
+   done
    [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] || ESTATUS=$(echo -e "\033[38;2;255;69;0m\033[1m  FALLO DE INSTALACION") &>/dev/null
    [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] && ESTATUS=$(echo -e "\033[38;2;242;211;56m\033[1m       \033[38;2;76;175;80m\033[1mINSTALADO") &>/dev/null
    echo -ne "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m $ESTATUS \033[0m\n"
    sleep 0.5s
-rm -f time_output.txt
 }
 
 
