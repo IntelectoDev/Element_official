@@ -1,4 +1,4 @@
-# 💻 𝙎 𝘾 𝙍 𝙄 𝙋 𝙏 | 𝙀𝙇𝙀𝙈𝙀𝙉𝙏 💻  v 2.0
+# 💻 𝙎 𝘾 𝙍 𝙄 𝙋 𝙏 | 𝙀𝙇𝙀𝙈𝙀𝙉𝙏 💻  v 1.0
 
 ## **Script Manager de VPS**   
 _Este es un script para la administracion de Cuentas SSH es una compilacion con lo mejor de cada script_
