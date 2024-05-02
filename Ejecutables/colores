@@ -85,42 +85,36 @@ print_center(){
 
 # ------- BARRA DE INTALL BASICO
 barra_intallb() {
-  local comando="$1"
-  local pid
-
-  # Iniciar el proceso de instalación en segundo plano
-  $comando &>/dev/null &
+ comando="$1"
+  _=$(
+    $comando >/dev/null 2>&1
+  ) &
+  >/dev/null
   pid=$!
-
-  # Mostrar la barra de progreso mientras el proceso de instalación está activo
-  while [[ -d /proc/$pid ]]; do
-    echo -ne "  \033[38;2;242;211;56m[\033[1m"
-    for ((i = 0; i < 40; i++)); do
-      printf "\033[38;2;255;69;0m>"
-      sleep 0.1
-    done
-    echo -ne "\033[38;2;242;211;56m]\033[1m"
-    sleep 1s
-    echo
-    tput cuu1 && tput dl1
-  done
-
-  # Mostrar mensaje de instalación exitosa
-  echo -ne "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m - \033[38;2;76;175;80m\033[1mOK\033[0m\n"
-  sleep 1s
+  while [[ -d /proc/$pid ]];do
+   echo -ne "  \033[38;2;242;211;56m[\033[1m"
+   for ((i = 0; i < 40; i++)); do
+     printf "\033[38;2;255;69;0m>"
+     sleep 0.1
+   done
+   echo -ne "\033[38;2;242;211;56m]\033[1m"
+   sleep 1s
+   echo
+   tput cuu1 && tput dl1
+ done
+ echo -ne "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m - \033[38;2;76;175;80m\033[1mOK\033[0m\n"
+ sleep 1s
 }
 
 # ------- BARRA DE INSTALL PAQUETES
 barra_intall() {
-   local comando="$1"
-   local paquete="$2"
-   local pid
-
-   # Iniciar el proceso de instalación en segundo plano
-   $comando &>/dev/null &
+   comando="$1"
+   paquete="$2"
+   _=$(
+       $comando >/dev/null 2>&1
+   ) &
+   >/dev/null
    pid=$!
-
-   # Mostrar la barra de progreso mientras el proceso de instalación está activo
    while [[ -d /proc/$pid ]]; do
        echo -ne "  \033[38;2;242;211;56m[\033[1m"
        for ((i = 0; i < 20; i++)); do
@@ -132,15 +126,11 @@ barra_intall() {
        echo
        tput cuu1 && tput dl1
    done
-
-   # Verificar el estado final del paquete instalado
-   if dpkg --get-selections | grep -q "^$paquete[[:space:]]*install"; then
-       echo -e "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m \033[38;2;76;175;80mINSTALADO \033[0m\n"
-   else
-       echo -e "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m \033[38;2;255;69;0mFALLO DE INSTALACION \033[0m\n"
-   fi
+   [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] || ESTATUS=$(echo -e "\033[38;2;255;69;0m\033[1m  FALLO DE INSTALACION") &>/dev/null
+   [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] && ESTATUS=$(echo -e "\033[38;2;242;211;56m\033[1m       \033[38;2;76;175;80m\033[1mINSTALADO") &>/dev/null
+   echo -ne "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m $ESTATUS \033[0m\n"
+   sleep 0.5s
 }
-
 
 # ------- BARRA CENTRADORA
 print_center() {
