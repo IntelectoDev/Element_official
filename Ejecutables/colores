@@ -112,7 +112,7 @@ done
 echo -ne "  \033[38;2;242;211;56m[\033[38;2;76;175;80m>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m - \033[38;2;76;175;80m\033[1mOK\033[0m\n"
 sleep 1s
 }
-------- BARRA DE INSTALL PAQUETES
+#------- BARRA DE INSTALL PAQUETES
 barra_intall() {
 comando="$1"
 paquete="$2"
@@ -144,14 +144,15 @@ done
 echo -ne "  \033[38;2;242;211;56m[\033[38;2;76;175;80m>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m $ESTATUS \033[0m\n"
 sleep 0.5s
 }
-------- BARRA CENTRADORA
+#------- BARRA CENTRADORA
 print_center() {
 if [[ -z $2 ]]; then
 text="$1"
 else
 col="$1"
 text="$2"
-fiwhile read line; do
+fi
+while read line; do
     unset space
     x=$(((54 - ${#line}) / 2))
     for ((i = 0; i < $x; i++)); do
