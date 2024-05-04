@@ -141,7 +141,6 @@ barra_install() {
    sleep 0.5s
 }
 
-
 # ------- BARRA DE INSTALL PAQUETES
 barra_intallc() {
    comando="$1"
