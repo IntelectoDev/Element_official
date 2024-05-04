@@ -162,7 +162,7 @@ barra_intallc() {
        ((elapsed_time-=1))
    done
    [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] || ESTATUS=$(echo -e "\033[38;2;255;69;0m\033[1m  FALLO DE CONFIGURACIÓN") &>/dev/null
-   [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] && ESTATUS=$(echo -e "\033[38;2;242;211;56m\033[1m ---- \033[38;2;76;175;80m\033[1m[ OK ]\033[0m\n") &>/dev/null
+   [[ $(dpkg --get-selections | grep -w "$paquete" | head -1) ]] && ESTATUS=$(echo -e "\033[38;2;242;211;56m\033[1m ----- \033[38;2;76;175;80m\033[1m[ OK ]\033[0m\n") &>/dev/null
    echo -ne "  \033[38;2;242;211;56m[\033[38;2;255;69;0m>>>>>>>>>>>>>>>>>>>>\033[38;2;242;211;56m]\033[1m $ESTATUS \033[0m\n"
    sleep 0.5s
 }
