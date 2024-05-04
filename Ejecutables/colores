@@ -143,13 +143,13 @@ barra_install() {
         done
 
         printf "\r${yellow}Instalando %s: [%s] %3d%%${reset}" "$paquete" "$bar" "$progress"
-        bar=""
 
         ((progress += 5))
         if ((progress > 100)); then
             progress=0
         fi
 
+        bar=""
         sleep 0.1
     done
 
@@ -162,7 +162,7 @@ barra_install() {
         status="${red}FALLO DE INSTALACION${reset}"
     fi
 
-    printf "\r${cyan}[%s] %s${reset}\n" "$bar" "$status"
+    printf "\n${cyan}[%s] %s${reset}\n" "$bar" "$status"
 }
 
 # ------- BARRA DE INSTALL PAQUETES
