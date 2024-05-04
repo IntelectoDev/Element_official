@@ -118,18 +118,10 @@ barra_install() {
    pid=$!
    
    # Definir colores
-   color_fondo="\033[48;2;42;42;42m"
    color_barra="\033[48;2;70;155;255m"
    color_instalado="\033[38;2;76;175;80m"
    color_fallo="\033[38;2;255;69;0m"
    color_reset="\033[0m"
-   
-   # Barra de progreso
-   printf "  $color_fondo"
-   for ((i = 0; i < 20; i++)); do
-       printf " "
-   done
-   printf "$color_reset"
    
    # Espera mientras se instala el paquete
    while ps -p $pid >/dev/null; do
@@ -152,7 +144,7 @@ barra_install() {
    fi
    
    # Imprimir resultado
-   echo -e "  $color_fondo$color_barra$ESTATUS$color_fondo\033[0m\n"
+   echo -e "$color_barra$ESTATUS$color_reset\n"
    sleep 0.5s
 }
 
