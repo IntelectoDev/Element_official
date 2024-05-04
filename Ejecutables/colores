@@ -122,7 +122,7 @@ barra_install() {
     reset='\033[0m'
 
     # Caracteres de la barra de progreso
-    filled="█"
+    filled="⬛"
     empty="░"
 
     start_time=$(date +%s)
@@ -134,6 +134,8 @@ barra_install() {
     bar=""
 
     while kill -0 "$pid" >/dev/null 2>&1; do
+        echo -ne " \033[38;2;242;211;56m[\033[1m"
+
         for ((i = 0; i < $bar_length; i++)); do
             if ((i < progress * bar_length / 100)); then
                 bar+="$filled"
@@ -142,14 +144,21 @@ barra_install() {
             fi
         done
 
-        printf "\r${yellow}Instalando %s: [%s] %3d%%${reset}" "$paquete" "$bar" "$progress"
+        printf "\033[38;2;70;155;255m%s" "$bar"
+        bar=""
+
+        echo -ne "\033[38;2;242;211;56m]\033[1m"
+
+        printf " %3d%%" "$progress"
+
+        echo
 
         ((progress += 5))
         if ((progress > 100)); then
             progress=0
         fi
 
-        bar=""
+        tput cuu1 && tput dl1
         sleep 0.1
     done
 
@@ -162,9 +171,9 @@ barra_install() {
         status="${red}FALLO DE INSTALACION${reset}"
     fi
 
-    printf "\n${cyan}[%s] %s${reset}\n" "$bar" "$status"
+    echo -ne " \033[38;2;242;211;56m[\033[38;2;70;155;255m${filled}${filled}${filled}${filled}${filled}${filled}${filled}${filled}${filled}\033[38;2;242;211;56m]\033[1m $status \033[0m\n"
+    sleep 0.5s
 }
-
 # ------- BARRA DE INSTALL PAQUETES
 barra_intallc() {
    comando="$1"
