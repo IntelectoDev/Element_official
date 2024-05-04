@@ -111,34 +111,58 @@ barra_intallb() {
 
 # ------- BARRA DE INSTALL PAQUETES
 barra_install() {
-   comando="$1"
-   paquete="$2"
-   start_time=$(date +%s)
-   $comando >/dev/null 2>&1 &
-   pid=$!
-   while ps -p $pid >/dev/null; do
-       echo -ne "  \033[38;2;242;211;56m[\033[1m"
-       for ((i = 0; i < 20; i++)); do
-           printf "\033[38;2;70;155;255m⬛"
-           sleep 0.1
-       done
-       echo -ne "\033[38;2;242;211;56m]\033[1m"
-       sleep 0.5s
-       echo
-       tput cuu1 && tput dl1
-   done
-   end_time=$(date +%s)
-   elapsed_time=$((end_time - start_time))
-   while [ $elapsed_time -gt 20 ]; do
-       ((elapsed_time-=1))
-   done
-   if dpkg --get-selections | grep -w "$paquete" &>/dev/null; then
-       ESTATUS="\033[38;2;76;175;80m\033[1mINSTALADO"
-   else
-       ESTATUS="\033[38;2;255;69;0m\033[1mFALLO DE INSTALACION"
-   fi
-   echo -ne "  \033[38;2;242;211;56m[\033[38;2;70;155;255m⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛\033[38;2;242;211;56m]\033[1m $ESTATUS \033[0m\n"
-   sleep 0.5s
+    comando="$1"
+    paquete="$2"
+
+    # Colores
+    cyan='\033[0;36m'
+    green='\033[0;32m'
+    red='\033[0;31m'
+    yellow='\033[0;33m'
+    reset='\033[0m'
+
+    # Caracteres de la barra de progreso
+    filled="█"
+    empty="░"
+
+    start_time=$(date +%s)
+    $comando >/dev/null 2>&1 &
+    pid=$!
+
+    progress=0
+    bar_length=20
+    bar=""
+
+    while kill -0 "$pid" >/dev/null 2>&1; do
+        for ((i = 0; i < $bar_length; i++)); do
+            if ((i < progress * bar_length / 100)); then
+                bar+="$filled"
+            else
+                bar+="$empty"
+            fi
+        done
+
+        printf "\r${yellow}Instalando %s: [%s] %3d%%${reset}" "$paquete" "$bar" "$progress"
+        bar=""
+
+        ((progress += 5))
+        if ((progress > 100)); then
+            progress=0
+        fi
+
+        sleep 0.1
+    done
+
+    end_time=$(date +%s)
+    elapsed_time=$((end_time - start_time))
+
+    if dpkg --get-selections | grep -w "$paquete" &>/dev/null; then
+        status="${green}INSTALADO${reset}"
+    else
+        status="${red}FALLO DE INSTALACION${reset}"
+    fi
+
+    printf "\r${cyan}[%s] %s${reset}\n" "$bar" "$status"
 }
 
 # ------- BARRA DE INSTALL PAQUETES
