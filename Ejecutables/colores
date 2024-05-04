@@ -111,48 +111,51 @@ barra_intallb() {
 
 # ------- BARRA DE INSTALL PAQUETES
 barra_install() {
-    comando="$1"
-    paquete="$2"
-
-    start_time=$(date +%s)
-
-    $comando >/dev/null 2>&1 &
-    pid=$!
-
-    # Colores
-    verde="\033[32m"
-    amarillo="\033[33m"
-    azul="\033[34m"
-    reset="\033[0m"
-
-    # Barra de progreso
-    barra="[====>                ]"
-    longitud=${#barra}
-
-    while ps -p $pid >/dev/null; do
-        for ((i = 0; i < ${longitud}; i += 3)); do
-            printf "${barra:0:$i}${amarillo}${barra:$i:3}${reset}${barra:$i+3}"
-            sleep 0.1
-            printf "\r"
-        done
-    done
-
-    end_time=$(date +%s)
-    elapsed_time=$((end_time - start_time))
-
-    while [ $elapsed_time -gt 20 ]; do
-        ((elapsed_time -= 1))
-    done
-
-    if dpkg --get-selections | grep -w "$paquete" &>/dev/null; then
-        ESTATUS="${verde}INSTALADO${reset}"
-    else
-        ESTATUS="${azul}FALLO DE INSTALACIÓN${reset}"
-    fi
-
-    printf "\n${amarillo}%s${reset} ${ESTATUS}\n" "${barra//=/#}"
-    sleep 0.5s
+   comando="$1"
+   paquete="$2"
+   start_time=$(date +%s)
+   $comando >/dev/null 2>&1 &
+   pid=$!
+   
+   # Definir colores
+   color_fondo="\033[48;2;42;42;42m"
+   color_barra="\033[48;2;70;155;255m"
+   color_instalado="\033[38;2;76;175;80m"
+   color_fallo="\033[38;2;255;69;0m"
+   color_reset="\033[0m"
+   
+   # Barra de progreso
+   printf "  $color_fondo"
+   for ((i = 0; i < 20; i++)); do
+       printf " "
+   done
+   printf "$color_reset"
+   
+   # Espera mientras se instala el paquete
+   while ps -p $pid >/dev/null; do
+       printf "\033[1D$color_barra█\033[1C"
+       sleep 0.1
+   done
+   
+   # Calcular tiempo de espera
+   end_time=$(date +%s)
+   elapsed_time=$((end_time - start_time))
+   while [ $elapsed_time -gt 20 ]; do
+       ((elapsed_time-=1))
+   done
+   
+   # Verificar si el paquete está instalado
+   if dpkg --get-selections | grep -w "$paquete" &>/dev/null; then
+       ESTATUS="$color_instalado INSTALADO"
+   else
+       ESTATUS="$color_fallo FALLO DE INSTALACION"
+   fi
+   
+   # Imprimir resultado
+   echo -e "  $color_fondo$color_barra$ESTATUS$color_fondo\033[0m\n"
+   sleep 0.5s
 }
+
 # ------- BARRA DE INSTALL PAQUETES
 barra_intallc() {
    comando="$1"
