@@ -111,55 +111,51 @@ barra_intallb() {
 
 # ------- BARRA DE INSTALL PAQUETES
 barra_install() {
-   comando="$1"
-   paquete="$2"
-   start_time=$(date +%s)
-   $comando >/dev/null 2>&1 &
-   pid=$!
-
-   # Definir colores
-   color_barra="\033[48;2;70;155;255m"
-   color_instalado="\033[38;2;76;175;80m"
-   color_fallo="\033[38;2;255;69;0m"
-   color_reset="\033[0m"
-
-   # Tamaño visual de la barra de progreso
-   barra_size=20
-
-   # Espera mientras se instala el paquete
-   while ps -p $pid >/dev/null; do
-       # Calcular el progreso
-       elapsed_time=$(($(date +%s) - start_time))
-       progress=$((elapsed_time * barra_size / 20))
-       remaining=$((barra_size - progress))
-
-       # Imprimir la barra de progreso
-       printf "\033[1D$color_barra"
-       for ((i = 0; i < progress; i++)); do
-           printf "█"
-       done
-       for ((i = 0; i < remaining; i++)); do
-           printf " "
-       done
-       printf "$color_reset"
-       sleep 0.1
-   done
-
-   # Verificar si el paquete está instalado
-   if dpkg --get-selections | grep -w "$paquete" &>/dev/null; then
-       ESTATUS="$color_instalado INSTALADO"
-   else
-       ESTATUS="$color_fallo FALLO DE INSTALACION"
-   fi
-
-   # Imprimir resultado
-   printf "\033[1D$color_barra"
-   for ((i = 0; i < barra_size; i++)); do
-       printf "█"
-   done
-   printf "$color_reset $ESTATUS\n"
-   sleep 0.5s
+    local comando="$1"
+    local paquete="$2"
+    local start_time=$(date +%s)
+    
+    # Ejecutar el comando en segundo plano y obtener el PID del proceso
+    $comando >/dev/null 2>&1 &
+    local pid=$!
+    
+    # Definir colores
+    local color_barra="\033[48;2;70;155;255m"
+    local color_instalado="\033[38;2;76;175;80m"
+    local color_fallo="\033[38;2;255;69;0m"
+    local color_reset="\033[0m"
+    
+    # Mostrar la barra de progreso
+    printf "$color_barra"
+    while ps -p $pid >/dev/null; do
+        printf "█"
+        sleep 0.1
+    done
+    printf "$color_reset\n"
+    
+    # Calcular el tiempo transcurrido
+    local end_time=$(date +%s)
+    local elapsed_time=$((end_time - start_time))
+    
+    # Limitar el tiempo máximo de espera a 20 segundos
+    if [ $elapsed_time -gt 20 ]; then
+        elapsed_time=20
+    fi
+    
+    # Esperar un poco antes de verificar la instalación
+    sleep 0.5
+    
+    # Verificar si el paquete está instalado
+    if dpkg --get-selections | grep -w "$paquete" &>/dev/null; then
+        local estatus="$color_instalado INSTALADO"
+    else
+        local estatus="$color_fallo FALLO DE INSTALACION"
+    fi
+    
+    # Imprimir resultado
+    echo -e "$estatus$color_reset\n"
 }
+
 
 # ------- BARRA DE INSTALL PAQUETES
 barra_intallc() {
