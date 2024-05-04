@@ -118,7 +118,7 @@ barra_install() {
    while ps -p $pid >/dev/null; do
        echo -ne "  \033[1;33m["
        for ((i = 0; i < 20; i++)); do
-           printf "\033[38;5;226m▓"  # Amarillo claro
+           printf "\033[38;5;226m◼"  # Amarillo claro
            sleep 0.1
        done
        echo -ne "\033[1;33m"
@@ -133,11 +133,11 @@ barra_install() {
    done
    if dpkg --get-selections | grep -w "$paquete" &>/dev/null; then
        ESTATUS="\033[38;5;40m       \033[38;5;46mINSTALADO"  # Verde oscuro y verde claro
-       echo -ne "  \033[1;33m[\033[38;5;40m▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\033[1;33m] $ESTATUS \033[0m\n"  # Verde oscuro
+       echo -ne "  \033[1;33m[\033[38;5;40m◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼\033[1;33m] $ESTATUS \033[0m\n"  # Verde oscuro
        sleep 0.5s
    else
        ESTATUS="\033[38;5;160m  FALLO DE INSTALACION"  # Rojo claro
-       echo -ne "  \033[1;33m[\033[38;5;196m▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\033[1;33m] $ESTATUS \033[0m\n"  # Rojo oscuro
+       echo -ne "  \033[1;33m[\033[38;5;196m◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼\033[1;33m] $ESTATUS \033[0m\n"  # Rojo oscuro
        sleep 0.5s
    fi
 }
