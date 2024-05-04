@@ -114,51 +114,44 @@ barra_install() {
     comando="$1"
     paquete="$2"
 
-    # Colores
-    cyan='\033[0;36m'
-    green='\033[0;32m'
-    red='\033[0;31m'
-    yellow='\033[0;33m'
-    reset='\033[0m'
-
     start_time=$(date +%s)
+
     $comando >/dev/null 2>&1 &
     pid=$!
 
-    bar_length=20
-    progress=0
-    bar=""
+    # Colores
+    verde="\033[32m"
+    amarillo="\033[33m"
+    azul="\033[34m"
+    reset="\033[0m"
 
-    while kill -0 "$pid" >/dev/null 2>&1; do
-        for ((i = 0; i < $bar_length; i++)); do
-            if ((i < progress * bar_length / 100)); then
-                bar+="\033[38;2;70;155;255m⬛"
-            else
-                bar+="\033[38;2;242;211;56m░"
-            fi
+    # Barra de progreso
+    barra="[====>                ]"
+    longitud=${#barra}
+
+    while ps -p $pid >/dev/null; do
+        for ((i = 0; i < ${longitud}; i += 3)); do
+            printf "${barra:0:$i}${amarillo}${barra:$i:3}${reset}${barra:$i+3}"
+            sleep 0.1
+            printf "\r"
         done
-
-        printf "\r\033[38;2;242;211;56m[\033[1m%s\033[38;2;242;211;56m]\033[1m %3d%%" "$bar" "$progress"
-        bar=""
-
-        ((progress += 5))
-        if ((progress > 100)); then
-            progress=0
-        fi
-
-        sleep 0.1
     done
 
     end_time=$(date +%s)
     elapsed_time=$((end_time - start_time))
 
+    while [ $elapsed_time -gt 20 ]; do
+        ((elapsed_time -= 1))
+    done
+
     if dpkg --get-selections | grep -w "$paquete" &>/dev/null; then
-        status="${green}INSTALADO${reset}"
+        ESTATUS="${verde}INSTALADO${reset}"
     else
-        status="${red}FALLO DE INSTALACION${reset}"
+        ESTATUS="${azul}FALLO DE INSTALACIÓN${reset}"
     fi
 
-    printf "\r${cyan}[%s] %s${reset}\n" "$bar" "$status"
+    printf "\n${amarillo}%s${reset} ${ESTATUS}\n" "${barra//=/#}"
+    sleep 0.5s
 }
 # ------- BARRA DE INSTALL PAQUETES
 barra_intallc() {
