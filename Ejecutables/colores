@@ -110,8 +110,21 @@ barra_intallb() {
 }
 
 barra_install() {
+   # Verificar si se proporcionaron los argumentos esperados
+   if [ $# -ne 2 ]; then
+       echo "Uso: barra_install <comando> <paquete>"
+       return 1
+   fi
+
    comando="$1"
    paquete="$2"
+
+   # Verificar si el comando es válido
+   if ! command -v "$comando" > /dev/null 2>&1; then
+       echo "Error: El comando \"$comando\" no está disponible."
+       return 1
+   fi
+
    start_time=$(date +%s)
    $comando >/dev/null 2>&1 &
    pid=$!
@@ -141,6 +154,7 @@ barra_install() {
        sleep 0.5s
    fi
 }
+
 
 # ------- BARRA DE INSTALL PAQUETES
 barra_intallc() {
