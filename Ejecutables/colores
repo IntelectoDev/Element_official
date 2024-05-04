@@ -111,49 +111,34 @@ barra_intallb() {
 
 # ------- BARRA DE INSTALL PAQUETES
 barra_install() {
-    local comando="$1"
-    local paquete="$2"
-    local start_time=$(date +%s)
-    
-    # Ejecutar el comando en segundo plano y obtener el PID del proceso
-    $comando >/dev/null 2>&1 &
-    local pid=$!
-    
-    # Definir colores
-    local color_barra="\033[48;2;70;155;255m"
-    local color_instalado="\033[38;2;76;175;80m"
-    local color_fallo="\033[38;2;255;69;0m"
-    local color_reset="\033[0m"
-    
-    # Mostrar la barra de progreso
-    printf "$color_barra"
-    while ps -p $pid >/dev/null; do
-        printf "█"
-        sleep 0.1
-    done
-    printf "$color_reset\n"
-    
-    # Calcular el tiempo transcurrido
-    local end_time=$(date +%s)
-    local elapsed_time=$((end_time - start_time))
-    
-    # Limitar el tiempo máximo de espera a 20 segundos
-    if [ $elapsed_time -gt 20 ]; then
-        elapsed_time=20
-    fi
-    
-    # Esperar un poco antes de verificar la instalación
-    sleep 0.5
-    
-    # Verificar si el paquete está instalado
-    if dpkg --get-selections | grep -w "$paquete" &>/dev/null; then
-        local estatus="$color_instalado INSTALADO"
-    else
-        local estatus="$color_fallo FALLO DE INSTALACION"
-    fi
-    
-    # Imprimir resultado
-    echo -e "$estatus$color_reset\n"
+   comando="$1"
+   paquete="$2"
+   start_time=$(date +%s)
+   $comando >/dev/null 2>&1 &
+   pid=$!
+   while ps -p $pid >/dev/null; do
+       echo -ne "  \033[38;2;242;211;56m[\033[1m"
+       for ((i = 0; i < 20; i++)); do
+           printf "\033[38;2;70;155;255m█"
+           sleep 0.1
+       done
+       echo -ne "\033[38;2;242;211;56m]\033[1m"
+       sleep 0.5s
+       echo
+       tput cuu1 && tput dl1
+   done
+   end_time=$(date +%s)
+   elapsed_time=$((end_time - start_time))
+   while [ $elapsed_time -gt 20 ]; do
+       ((elapsed_time-=1))
+   done
+   if dpkg --get-selections | grep -w "$paquete" &>/dev/null; then
+       ESTATUS="\033[38;2;76;175;80m\033[1mINSTALADO"
+   else
+       ESTATUS="\033[38;2;255;69;0m\033[1mFALLO DE INSTALACION"
+   fi
+   echo -ne "  \033[38;2;242;211;56m[\033[38;2;70;155;255m██████████\033[38;2;242;211;56m]\033[1m $ESTATUS \033[0m\n"
+   sleep 0.5s
 }
 
 
